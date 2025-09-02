@@ -1,0 +1,100 @@
+GraphQL Cheat Sheet for Developers
+1️⃣ Basics – What is GraphQL?
+
+GraphQL is a query language for APIs.
+
+Lets clients ask for exactly the data they need.
+
+Single endpoint (/graphql) instead of multiple REST endpoints.
+
+2️⃣ Core Concepts
+
+Schema → Defines types & available queries.
+
+Types:
+
+Query → Read data.
+
+Mutation → Modify data.
+
+Subscription → Real-time data (via WebSockets).
+
+Resolvers → Functions that fetch the actual data for fields.
+
+3️⃣ Example Schema
+type Weather {
+  temperature: String
+  wind: String
+  description: String
+  forecast: [Forecast]
+}
+
+type Forecast {
+  day: String
+  temperature: String
+  wind: String
+}
+
+type Query {
+  getWeather(city: String!): Weather
+}
+
+4️⃣ Example Query
+query {
+  getWeather(city: "London") {
+    temperature
+    wind
+    description
+  }
+}
+
+
+📌 Only returns the requested fields.
+
+5️⃣ Example Resolver (Node.js)
+const resolvers = {
+  Query: {
+    getWeather: async (_, { city }) => {
+      const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=API_KEY&q=${city}`);
+      const data = await response.json();
+      return {
+        temperature: data.current.temp_c,
+        wind: data.current.wind_kph,
+        description: data.current.condition.text,
+      };
+    },
+  },
+};
+
+6️⃣ GraphQL vs REST
+Feature	REST 🌐	GraphQL ⚡
+Endpoints	Multiple	Single (/graphql)
+Data Fetching	Fixed response	Ask for exact fields
+Over-fetching	Common	None
+Real-time Updates	Harder	Subscriptions
+7️⃣ Running GraphQL Server (Node.js)
+node index.js
+
+
+If you install nodemon, you can auto-restart on file changes:
+
+npm install -g nodemon
+nodemon index.js
+
+8️⃣ GraphQL in Java
+
+Use GraphQL Java library.
+
+Similar concepts: schema + resolvers.
+
+Integrated with Spring Boot using graphql-spring-boot-starter.
+
+9️⃣ Developer Tips
+
+Start with schema → then resolvers.
+
+Use GraphQL Playground / Apollo Studio for testing.
+
+Keep resolvers clean — delegate data fetching to services.
+
+Use caching (e.g., Apollo Client) for performance.
